@@ -1,0 +1,20 @@
+stages:
+  - build # We only have one stage
+
+BuildAndDeploy: # Let's create a job for building the project
+  stage: build # This job will run during the build stage
+  script:
+    - echo "Runner's Working directory ..." && pwd
+    - gradle build # Equivalent to running build in your IDE
+    - echo "Project directory after build ..." && ls
+    - echo "Remote copying build artifacts to the production server ..."
+    - scp -i /home/gitlab-runner/.ssh/id_rsa -r ./build/libs/* csse@371-3-a-prod:public_html/
+    - echo "All done, cleaning the project directory ..."
+    - gradle clean
+  only:
+    - master # Only build the master git branch
+  tags:
+    - Stull
+    - Gradle
+    - Java
+    - Runner
