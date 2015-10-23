@@ -17,4 +17,3 @@ BuildAndDeploy: # Let's create a job for building the project
     - Stull
     - Gradle
     - Java
-    - Runner
