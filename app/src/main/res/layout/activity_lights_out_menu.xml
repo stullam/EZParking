@@ -1,0 +1,119 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context=".LightsOutMenu"
+    android:background = "@color/background"
+    >
+
+    //I parked here button
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="150dp"
+        android:layout_height="60dp"
+        android:text="I Parked Here"
+        android:id="@+id/IParked"
+        android:layout_above="@+id/FindNearest"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    //Search Button
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="150dp"
+        android:layout_height="60dp"
+        android:text="Search"
+        android:id="@+id/Search"
+        android:layout_marginTop = "225dp"
+        android:layout_centerHorizontal="true"
+        />
+
+    //Map View Button
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="150dp"
+        android:layout_height="60dp"
+        android:text="Map View"
+        android:id="@+id/MapView"
+        android:layout_below="@+id/Search"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    //Find Nearest Spot
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="150dp"
+        android:layout_height="60dp"
+        android:text="Find Nearest Spot"
+        android:id="@+id/FindNearest"
+        android:layout_below="@+id/MapView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    // Match Preferences
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="150dp"
+        android:layout_height="60dp"
+        android:text="Match Preferences"
+        android:id="@+id/MatchPreferences"
+        android:layout_alignTop="@+id/FindNearest"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    // Settings Button
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Settings"
+        android:id="@+id/Settings"
+        android:layout_alignParentTop="true"
+        android:layout_alignRight="@+id/IParked"
+        android:layout_alignEnd="@+id/IParked" />
+
+    // List View Button
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="List View"
+        android:id="@+id/ListView"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <!--<Button-->
+        <!--style="?android:attr/buttonStyleSmall"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="mDemoButton"-->
+        <!--android:id="@+id/mDemoButton"-->
+        <!--android:layout_alignTop="@+id/textView"-->
+        <!--android:layout_alignRight="@+id/Search"-->
+        <!--android:layout_alignEnd="@+id/Search" />-->
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/textView"
+        android:layout_below="@+id/ListView"
+        android:layout_alignRight="@+id/ListView"
+        android:layout_alignEnd="@+id/ListView"
+        android:layout_marginTop="68dp" />
+
+    <!--<searchable xmlns:android="http://schemas.android.com/apk/res/android"-->
+        <!--android:label="Searchable"-->
+        <!--android:layout_width="250dp"-->
+        <!--android:layout_height="30dp"-->
+        <!--android:layout_marginTop = "100dp"-->
+        <!--android:layout_centerHorizontal="true">-->
+    <!--</searchable>-->
+
+</RelativeLayout>
+
+
