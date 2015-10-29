@@ -12,6 +12,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.util.Log;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 
 public class LightsOutMenu extends AppCompatActivity implements View.OnClickListener {
 
@@ -24,9 +27,27 @@ public class LightsOutMenu extends AppCompatActivity implements View.OnClickList
     private Button mListViewButton;
     private Button mDemoButton;
 
+    private ParkingSpot Parking1 = new ParkingSpot("Parking1", 39.4698, -87.3898);
+    private ParkingSpot Parking2 = new ParkingSpot("Parking2", 39.4700, -87.3898);
+    private ParkingSpot Parking3 = new ParkingSpot("Parking3", 39.4702, -87.3898);
+    private ParkingSpot Parking4 = new ParkingSpot("Parking4", 39.4704, -87.3898);
+    private ParkingSpot Parking5 = new ParkingSpot("Parking5", 39.4706, -87.3898);
+    private ParkingSpot Parking6 = new ParkingSpot("Parking6", 39.4708, -87.3898);
+    private ParkingSpot Parking7 = new ParkingSpot("Parking7", 39.4710, -87.3898);
+    private ParkingSpot Parking8 = new ParkingSpot("Parking8", 39.4712, -87.3898);
+    private ParkingSpot Parking9 = new ParkingSpot("Parking9", 39.4714, -87.3898);
+    private ParkingSpot Parking10 = new ParkingSpot("Parking10", 39.4716, -87.3898);
+
+    public ArrayList<ParkingSpot> parkSpots = new ArrayList<ParkingSpot>();
+    public double[] ParkingSpotsArray = new double[2];
+
     static final String KEY_SEARCH_RADIUS = "KEY_SEARCH_RADIUS";
+    static final String KEY_PARKSPOTS = "KEY_PARKSPOTS";
     private String mSearchRadius = "";
     private static final int REQUEST_CODE_CHANGE_BUTTON = 1;
+    private static final int REQUEST_CODE_PARKSPOTS = 1;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,13 +74,25 @@ public class LightsOutMenu extends AppCompatActivity implements View.OnClickList
 
         mListViewButton = (Button)findViewById(R.id.ListView);
         mListViewButton.setOnClickListener(this);
-
-
     }
 
     @Override
     public void onClick(View v) {
         //if(v.getId() == R.id.button)
+        parkSpots.add(Parking1);
+        parkSpots.add(Parking2);
+        parkSpots.add(Parking3);
+        parkSpots.add(Parking4);
+        parkSpots.add(Parking5);
+        parkSpots.add(Parking6);
+        parkSpots.add(Parking7);
+        parkSpots.add(Parking8);
+        parkSpots.add(Parking9);
+        parkSpots.add(Parking10);
+
+        ParkingSpotsArray[0] = 39.4696;
+        ParkingSpotsArray[1] = -87.3898;
+
         switch (v.getId()) {
             case R.id.Settings:
                 Log.d("LOM", "Settings Button Clicked");
@@ -80,7 +113,8 @@ public class LightsOutMenu extends AppCompatActivity implements View.OnClickList
                 break;
             case R.id.MapView:
                 Log.d("LOM", "Search Button Clicked");
-                Intent mapIntent = new Intent(this, MapView.class);
+                Intent mapIntent = new Intent(this, MapsActivity.class);
+                //Intent mapIntent = new Intent(this, MapView.class);
                 this.startActivity(mapIntent);
                 break;
             case R.id.MatchPreferences:
@@ -96,7 +130,10 @@ public class LightsOutMenu extends AppCompatActivity implements View.OnClickList
             case R.id.ListView:
                 Log.d("LOM", "Search Button Clicked");
                 Intent listIntent = new Intent(this, ListView.class);
-                this.startActivity(listIntent);
+                //listIntent.putExtra(KEY_PARKSPOTS, parkSpots); // Possible source of error
+                listIntent.putExtra(KEY_PARKSPOTS, ParkingSpotsArray);
+                startActivityForResult(listIntent, REQUEST_CODE_PARKSPOTS);
+                //this.startActivity(listIntent);
                 break;
         }
     }
