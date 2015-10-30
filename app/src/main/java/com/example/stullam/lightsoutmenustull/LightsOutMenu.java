@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -22,8 +24,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.util.Log;
 
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class LightsOutMenu extends AppCompatActivity implements View.OnClickListener {
@@ -95,6 +99,7 @@ public class LightsOutMenu extends AppCompatActivity implements View.OnClickList
         ArrayAdapter adapter =new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,cities);
 
         autoCompleteTv = (AutoCompleteTextView)findViewById(R.id.auto_complete_tv);
+        //autoCompleteTv.getText().toString();
         autoCompleteTv.setAdapter(adapter);
     }
 
@@ -132,12 +137,33 @@ public class LightsOutMenu extends AppCompatActivity implements View.OnClickList
                 break;
             case R.id.Search:
                 Log.d("LOM", "Search Button Clicked");
-                Intent searchIntent = new Intent(this, Search.class);
-                EditText address = (EditText) findViewById(R.id.address_enter);
-                EditText address2 = (EditText) findViewById(R.id.address_enter2);
-                searchIntent.putExtra("address", address.getText().toString());
-                searchIntent.putExtra("address2", address2.getText());
-                this.startActivity(searchIntent);
+                //Intent searchIntent = new Intent(this, Search.class);
+                Intent SearchIntent = new Intent(this, ListView.class);
+                //EditText address = (EditText) findViewById(R.id.address_enter);
+                //EditText address2 = (EditText) findViewById(R.id.address_enter2);
+                //searchIntent.putExtra("address", address.getText().toString());
+                //searchIntent.putExtra("address2", address2.getText());
+
+                Geocoder gc = new Geocoder(this);
+                try {
+                    List<Address> list = gc.getFromLocationName(autoCompleteTv.getText().toString(),1);
+                    Address add = list.get(0);
+                    double SearchLattitude = add.getLatitude();
+                    double SearchLongitude = add.getLongitude();
+                    ImportantSpotArray[0] = SearchLattitude;
+                    ImportantSpotArray[1] = SearchLongitude;
+                    String locality = add.getLocality();
+                    System.out.println("Stuff" + ImportantSpotArray[0] + ", " + ImportantSpotArray[1]);
+                    SearchIntent.putExtra(KEY_TARGETSPOT, ImportantSpotArray);
+                    //Intent MapIntent = new Intent(this, MapsActivity.class);
+                    //MapIntent.putExtra("Lat",add.getLatitude());
+                    //MapIntent.putExtra("Lon",add.getLongitude());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                //this.startActivity(searchIntent);
+                this.startActivity(SearchIntent);
                 break;
             case R.id.FindNearest:
                 Log.d("LOM", "Search Button Clicked");

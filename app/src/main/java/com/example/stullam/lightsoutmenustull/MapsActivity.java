@@ -129,6 +129,8 @@ public class MapsActivity extends FragmentActivity
             targetLong = ImportantSpotArray[1];
             currentLat = ImportantSpotArray[2];
             currentLong = ImportantSpotArray[3];
+            System.out.println("0 and 1" + ImportantSpotArray[0] + ", " + ImportantSpotArray[1]);
+            System.out.println("2 and 3" + ImportantSpotArray[2] + ", " + ImportantSpotArray[3]);
         }
 
         double[] locationData = this.getIntent().getDoubleArrayExtra(LightsOutMenu.KEY_LOCATIONARRAY);
