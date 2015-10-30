@@ -36,11 +36,14 @@ public class ListView extends AppCompatActivity implements View.OnClickListener 
     private ParkingSpot Parking10 = new ParkingSpot("Parking10", 35.4716, -87.3898);
 
     //private ArrayList<ParkingSpot> ListOfSpots = new ArrayList<ParkingSpot>();
-    private double[] TargetSpot = new double[2];
+    private double[] ImportantSpotArray = new double[4];
+    private double[] CurrentSpot = new double[2];
     private double[][] SortedListByDistances = new double[10][2];
 
     public ArrayList<ParkingSpot> parkSpots = new ArrayList<ParkingSpot>();
     public ArrayList<ParkingSpot> distanceSortedSpots = new ArrayList<ParkingSpot>();
+
+    static final String KEY_CURRENTSPOT = "KEY_CURRENTSPOT";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,11 +61,18 @@ public class ListView extends AppCompatActivity implements View.OnClickListener 
         parkSpots.add(Parking9);
         parkSpots.add(Parking10);
 
-        TargetSpot = (double[]) this.getIntent().getDoubleArrayExtra(LightsOutMenu.KEY_PARKSPOTS);
-        Log.d("LOM", "list of spots 0 = " + TargetSpot[0]);
-        Log.d("LOM", "list of spots 1 = " + TargetSpot[1]);
+        ImportantSpotArray = (double[]) this.getIntent().getDoubleArrayExtra(LightsOutMenu.KEY_TARGETSPOT);
+        Log.d("LOM", "list of spots 0 = " + ImportantSpotArray[0]);
+        Log.d("LOM", "list of spots 1 = " + ImportantSpotArray[1]);
+        Log.d("LOM", "list of spots 2 = " + ImportantSpotArray[2]);
+        Log.d("LOM", "list of spots 3 = " + ImportantSpotArray[3]);
 
-        sortSpotByDistance(parkSpots, TargetSpot);
+        // ImportantSpotArray 0 and 1 are the target location lat and long
+        // ImportantSpotArray 2 and 3 are the current target location lat and long
+
+        //this.getIntent().getParcelableArrayListExtra(LightsOutMenu.KEY_LISTOFSPOTS);
+
+        sortSpotByDistance(parkSpots, ImportantSpotArray);
 
         Park1 = (Button) findViewById(R.id.Park1);
         Park1.setText((String) distanceSortedSpots.get(0).getName());
@@ -135,7 +145,12 @@ public class ListView extends AppCompatActivity implements View.OnClickListener 
         switch (v.getId()) {
             case R.id.Park1:
                 Log.d("LOM", "Settings Button Clicked");
-                Intent Park1Intent = new Intent(this, SettingsActivity.class);
+                Intent Park1Intent = new Intent(this, MapsActivity.class);
+
+                // 2 and 3 are your target location
+                ImportantSpotArray[0] = Parking1.getLattitude();
+                ImportantSpotArray[1] = Parking1.getLongitude();
+                Park1Intent.putExtra(KEY_CURRENTSPOT, ImportantSpotArray);
                 //settingsIntent.putExtra(KEY_SEARCH_RADIUS, mSearchRadius); // Possible source of error
                 //startActivityForResult(settingsIntent, REQUEST_CODE_CHANGE_BUTTON);
                 //Park1Intent.putExtra(KEY_PARK1, Park1Array);
@@ -143,13 +158,19 @@ public class ListView extends AppCompatActivity implements View.OnClickListener 
                 break;
             case R.id.Park2:
                 Log.d("LOM", "Search Button Clicked");
-                Intent Park2Intent = new Intent(this, Search.class);
+                Intent Park2Intent = new Intent(this, MapsActivity.class);
+                ImportantSpotArray[0] = Parking2.getLattitude();
+                ImportantSpotArray[1] = Parking2.getLongitude();
+                Park2Intent.putExtra(KEY_CURRENTSPOT, ImportantSpotArray);
                 //Park1Intent.putExtra(KEY_PARK1, Park1Array);
                 this.startActivity(Park2Intent);
                 break;
             case R.id.Park3:
                 Log.d("LOM", "Settings Button Clicked");
-                Intent Park3Intent = new Intent(this, SettingsActivity.class);
+                Intent Park3Intent = new Intent(this, MapsActivity.class);
+                ImportantSpotArray[0] = Parking3.getLattitude();
+                ImportantSpotArray[1] = Parking3.getLongitude();
+                Park3Intent.putExtra(KEY_CURRENTSPOT, ImportantSpotArray);
                 //settingsIntent.putExtra(KEY_SEARCH_RADIUS, mSearchRadius); // Possible source of error
                 //startActivityForResult(settingsIntent, REQUEST_CODE_CHANGE_BUTTON);
                 //Park1Intent.putExtra(KEY_PARK1, Park1Array);
@@ -157,13 +178,19 @@ public class ListView extends AppCompatActivity implements View.OnClickListener 
                 break;
             case R.id.Park4:
                 Log.d("LOM", "Search Button Clicked");
-                Intent Park4Intent = new Intent(this, Search.class);
+                Intent Park4Intent = new Intent(this, MapsActivity.class);
+                ImportantSpotArray[0] = Parking4.getLattitude();
+                ImportantSpotArray[1] = Parking4.getLongitude();
+                Park4Intent.putExtra(KEY_CURRENTSPOT, ImportantSpotArray);
                 //Park1Intent.putExtra(KEY_PARK1, Park1Array);
                 this.startActivity(Park4Intent);
                 break;
             case R.id.Park5:
                 Log.d("LOM", "Settings Button Clicked");
-                Intent Park5Intent = new Intent(this, SettingsActivity.class);
+                Intent Park5Intent = new Intent(this, MapsActivity.class);
+                ImportantSpotArray[0] = Parking5.getLattitude();
+                ImportantSpotArray[1] = Parking5.getLongitude();
+                Park5Intent.putExtra(KEY_CURRENTSPOT, ImportantSpotArray);
                 //settingsIntent.putExtra(KEY_SEARCH_RADIUS, mSearchRadius); // Possible source of error
                 //startActivityForResult(settingsIntent, REQUEST_CODE_CHANGE_BUTTON);
                 //Park1Intent.putExtra(KEY_PARK1, Park1Array);
@@ -171,13 +198,19 @@ public class ListView extends AppCompatActivity implements View.OnClickListener 
                 break;
             case R.id.Park6:
                 Log.d("LOM", "Search Button Clicked");
-                Intent Park6Intent = new Intent(this, Search.class);
+                Intent Park6Intent = new Intent(this, MapsActivity.class);
+                ImportantSpotArray[0] = Parking6.getLattitude();
+                ImportantSpotArray[1] = Parking6.getLongitude();
+                Park6Intent.putExtra(KEY_CURRENTSPOT, ImportantSpotArray);
                 //Park1Intent.putExtra(KEY_PARK1, Park1Array);
                 this.startActivity(Park6Intent);
                 break;
             case R.id.Park7:
                 Log.d("LOM", "Settings Button Clicked");
-                Intent Park7Intent = new Intent(this, SettingsActivity.class);
+                Intent Park7Intent = new Intent(this, MapsActivity.class);
+                ImportantSpotArray[0] = Parking7.getLattitude();
+                ImportantSpotArray[1] = Parking7.getLongitude();
+                Park7Intent.putExtra(KEY_CURRENTSPOT, ImportantSpotArray);
                 //settingsIntent.putExtra(KEY_SEARCH_RADIUS, mSearchRadius); // Possible source of error
                 //startActivityForResult(settingsIntent, REQUEST_CODE_CHANGE_BUTTON);
                 //Park1Intent.putExtra(KEY_PARK1, Park1Array);
@@ -185,13 +218,19 @@ public class ListView extends AppCompatActivity implements View.OnClickListener 
                 break;
             case R.id.Park8:
                 Log.d("LOM", "Search Button Clicked");
-                Intent Park8Intent = new Intent(this, Search.class);
+                Intent Park8Intent = new Intent(this, MapsActivity.class);
+                ImportantSpotArray[0] = Parking8.getLattitude();
+                ImportantSpotArray[1] = Parking8.getLongitude();
+                Park8Intent.putExtra(KEY_CURRENTSPOT, ImportantSpotArray);
                 //Park1Intent.putExtra(KEY_PARK1, Park1Array);
                 this.startActivity(Park8Intent);
                 break;
             case R.id.Park9:
                 Log.d("LOM", "Settings Button Clicked");
-                Intent Park9Intent = new Intent(this, SettingsActivity.class);
+                Intent Park9Intent = new Intent(this, MapsActivity.class);
+                ImportantSpotArray[0] = Parking9.getLattitude();
+                ImportantSpotArray[1] = Parking9.getLongitude();
+                Park9Intent.putExtra(KEY_CURRENTSPOT, ImportantSpotArray);
                 //settingsIntent.putExtra(KEY_SEARCH_RADIUS, mSearchRadius); // Possible source of error
                 //startActivityForResult(settingsIntent, REQUEST_CODE_CHANGE_BUTTON);
                 //Park1Intent.putExtra(KEY_PARK1, Park1Array);
@@ -199,7 +238,10 @@ public class ListView extends AppCompatActivity implements View.OnClickListener 
                 break;
             case R.id.Park10:
                 Log.d("LOM", "Search Button Clicked");
-                Intent Park10Intent = new Intent(this, Search.class);
+                Intent Park10Intent = new Intent(this, MapsActivity.class);
+                ImportantSpotArray[0] = Parking10.getLattitude();
+                ImportantSpotArray[1] = Parking10.getLongitude();
+                Park10Intent.putExtra(KEY_CURRENTSPOT, ImportantSpotArray);
                 //Park1Intent.putExtra(KEY_PARK1, Park1Array);
                 this.startActivity(Park10Intent);
                 break;

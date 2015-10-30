@@ -1,14 +1,24 @@
 package com.example.stullam.lightsoutmenustull;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.util.Log;
 
@@ -39,15 +49,21 @@ public class LightsOutMenu extends AppCompatActivity implements View.OnClickList
     private ParkingSpot Parking10 = new ParkingSpot("Parking10", 39.4716, -87.3898);
 
     public ArrayList<ParkingSpot> parkSpots = new ArrayList<ParkingSpot>();
-    public double[] ParkingSpotsArray = new double[2];
+    public double[] ImportantSpotArray = new double[4];
+    public double[] LocationArray = new double[4];
 
     static final String KEY_SEARCH_RADIUS = "KEY_SEARCH_RADIUS";
-    static final String KEY_PARKSPOTS = "KEY_PARKSPOTS";
+    static final String KEY_TARGETSPOT = "KEY_TARGETSPOT";
+    static final String KEY_LISTOFSPOTS = "KEY_LISTOFSPOTS";
+    static final String KEY_LOCATIONARRAY = "KEY_LOCATIONARRAY";
     private String mSearchRadius = "";
     private static final int REQUEST_CODE_CHANGE_BUTTON = 1;
-    private static final int REQUEST_CODE_PARKSPOTS = 1;
+    private static final int REQUEST_CODE_TARGETSPOT = 1;
+    private static final int REQUEST_CODE_LISTOFSPOTS = 1;
+    public double currentSpotLat = 0;
+    public double currentSpotLong = 0;
 
-
+    private AutoCompleteTextView autoCompleteTv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +90,12 @@ public class LightsOutMenu extends AppCompatActivity implements View.OnClickList
 
         mListViewButton = (Button)findViewById(R.id.ListView);
         mListViewButton.setOnClickListener(this);
+
+        String[] cities = getResources().getStringArray(R.array.list_of_cities);
+        ArrayAdapter adapter =new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,cities);
+
+        autoCompleteTv = (AutoCompleteTextView)findViewById(R.id.auto_complete_tv);
+        autoCompleteTv.setAdapter(adapter);
     }
 
     @Override
@@ -90,8 +112,15 @@ public class LightsOutMenu extends AppCompatActivity implements View.OnClickList
         parkSpots.add(Parking9);
         parkSpots.add(Parking10);
 
-        ParkingSpotsArray[0] = 39.4696;
-        ParkingSpotsArray[1] = -87.3898;
+        // This is where you enter the code to detemrine where the target spot is.
+        // Store the 0 as the lattitude, and the 1 index as the longitude
+        // 0 and 1 can be target spot lattitude and longitude
+        // and 2 and 3 can be the current spot lattitude and longitude
+        // or the other way around
+        ImportantSpotArray[0] = 39.4696;
+        ImportantSpotArray[1] = -87.3898;
+        //ImportantSpotArray[2] = currentSpotLat;
+       // ImportantSpotArray[3] = currentSpotLong;
 
         switch (v.getId()) {
             case R.id.Settings:
@@ -104,6 +133,10 @@ public class LightsOutMenu extends AppCompatActivity implements View.OnClickList
             case R.id.Search:
                 Log.d("LOM", "Search Button Clicked");
                 Intent searchIntent = new Intent(this, Search.class);
+                EditText address = (EditText) findViewById(R.id.address_enter);
+                EditText address2 = (EditText) findViewById(R.id.address_enter2);
+                searchIntent.putExtra("address", address.getText().toString());
+                searchIntent.putExtra("address2", address2.getText());
                 this.startActivity(searchIntent);
                 break;
             case R.id.FindNearest:
@@ -115,6 +148,7 @@ public class LightsOutMenu extends AppCompatActivity implements View.OnClickList
                 Log.d("LOM", "Search Button Clicked");
                 Intent mapIntent = new Intent(this, MapsActivity.class);
                 //Intent mapIntent = new Intent(this, MapView.class);
+                mapIntent.putExtra(KEY_LOCATIONARRAY, LocationArray);
                 this.startActivity(mapIntent);
                 break;
             case R.id.MatchPreferences:
@@ -123,17 +157,58 @@ public class LightsOutMenu extends AppCompatActivity implements View.OnClickList
                 this.startActivity(matchIntent);
                 break;
             case R.id.IParked:
-                Log.d("LOM", "Search Button Clicked");
-                Intent parkIntent = new Intent(this, ParkedHere.class);
-                this.startActivity(parkIntent);
+                Log.d("LOM", "Park Button Clicked");
+                LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                int permission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+                if(permission == PackageManager.PERMISSION_GRANTED) {
+                    manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, new LocationListener() {
+                        @Override
+                        public void onLocationChanged(Location location) {
+
+                        }
+
+                        @Override
+                        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+                        }
+
+                        @Override
+                        public void onProviderEnabled(String provider) {
+
+                        }
+
+                        @Override
+                        public void onProviderDisabled(String provider) {
+
+                        }
+                    });
+                    Location currentLocation = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    if (currentLocation != null) {
+                        double latitude = currentLocation.getLatitude();
+                        double longitude = currentLocation.getLongitude();
+                        ImportantSpotArray[2] = latitude;
+                        ImportantSpotArray[3] = longitude;
+                        LocationArray[0] = latitude;
+                        LocationArray[1] = longitude;
+                        LocationArray[2] = 20;
+                        LocationArray[3] = 20;
+                        Log.d("LQM", "Latitude: " + Double.toString(latitude) + " Longitude: " + Double.toString(longitude));
+                    } else {
+                        Log.d("LQM", "No geo location found.");
+                    }
+                }
+//                Intent parkIntent = new Intent(this, ParkedHere.class);
+//                this.startActivity(parkIntent);
                 break;
             case R.id.ListView:
                 Log.d("LOM", "Search Button Clicked");
                 Intent listIntent = new Intent(this, ListView.class);
                 //listIntent.putExtra(KEY_PARKSPOTS, parkSpots); // Possible source of error
-                listIntent.putExtra(KEY_PARKSPOTS, ParkingSpotsArray);
-                startActivityForResult(listIntent, REQUEST_CODE_PARKSPOTS);
-                //this.startActivity(listIntent);
+                listIntent.putExtra(KEY_TARGETSPOT, ImportantSpotArray);
+                //listIntent.putExtra(KEY_LISTOFSPOTS, parkSpots);
+                //listIntent.putParcelableArrayListExtra(KEY_LISTOFSPOTS, parkSpots);
+                //startActivityForResult(listIntent, REQUEST_CODE_TARGETSPOT);
+                this.startActivity(listIntent);
                 break;
         }
     }

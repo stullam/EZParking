@@ -31,12 +31,32 @@ public class MapsActivity extends FragmentActivity
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private LocationRequest mLocationRequest;
 
+    private double[] ImportantSpotArray = new double[4];
+
+    public double targetLat = 0;
+    public double targetLong = 0;
+    public double currentLat = 0;
+    public double currentLong = 0;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         setUpMapIfNeeded();
+
+//        ImportantSpotArray = (double[]) this.getIntent().getDoubleArrayExtra(ListView.KEY_CURRENTSPOT);
+//        targetLat = ImportantSpotArray[0];
+//        targetLong = ImportantSpotArray[1];
+//        currentLat = ImportantSpotArray[2];
+//        currentLong = ImportantSpotArray[3];
+//        Log.d("LOM", "list of spots 0 = " + ImportantSpotArray[0]);
+//        Log.d("LOM", "list of spots 1 = " + ImportantSpotArray[1]);
+//        Log.d("LOM", "list of spots 2 = " + ImportantSpotArray[1]);
+//        Log.d("LOM", "list of spots 3 = " + ImportantSpotArray[2]);
+
+
 //        mGoogleApiClient = new GoogleApiClient.Builder(this)
 //                .addConnectionCallbacks(this)
 //                .addOnConnectionFailedListener(this)
@@ -100,8 +120,39 @@ public class MapsActivity extends FragmentActivity
      */
     private void setUpMap() {
         //mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
-        mMap.addMarker(new MarkerOptions().position(new LatLng(39.4696, -87.3898)).title("Terre Haute 1"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(39.4696, -87.3898)));
+        //Log.d("LOM", "ImportantSpotArray[0] = " + ImportantSpotArray[0]);
+        //Log.d("LOM", "ImportantSpotArray[1] = " + ImportantSpotArray[1]);
+
+        ImportantSpotArray = (double[]) this.getIntent().getDoubleArrayExtra(ListView.KEY_CURRENTSPOT);
+        if(ImportantSpotArray != null) {
+            targetLat = ImportantSpotArray[0];
+            targetLong = ImportantSpotArray[1];
+            currentLat = ImportantSpotArray[2];
+            currentLong = ImportantSpotArray[3];
+        }
+
+        double[] locationData = this.getIntent().getDoubleArrayExtra(LightsOutMenu.KEY_LOCATIONARRAY);
+        //ImportantSpotArray = this.getIntent().getDoubleArrayExtra(LightsOutMenu.KEY_LISTOFSPOTS);
+
+//        Log.d("LOM", "loc0 = " + locationData[0]);
+//        Log.d("LOM", "loc1 = " + locationData[1]);
+//        Log.d("LOM", "loc2 = " + locationData[2]);
+//        Log.d("LOM", "loc3 = " + locationData[3]);
+
+
+        if(ImportantSpotArray != null) {
+            mMap.addMarker(new MarkerOptions().position(new LatLng(targetLat, targetLong)).title("Target location"));
+            mMap.addMarker(new MarkerOptions().position(new LatLng(currentLat, currentLong)).title("You are here"));
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(targetLat, targetLong)));
+        }
+        if(locationData !=null) {
+            mMap.addMarker(new MarkerOptions().position(new LatLng(locationData[0], locationData[1])).title("Current Location"));
+            mMap.addMarker(new MarkerOptions().position(new LatLng(locationData[2], locationData[3])).title("Target location"));
+        }
+        //mMap.addMarker(new MarkerOptions().position(new LatLng(currentLat, currentLong)).title("You are here"));
+        //mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(targetLat, targetLong)));
+
+
 
     }
 

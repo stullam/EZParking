@@ -17,6 +17,8 @@
     <string name = "map_view"> Map View Pressed </string>
     <string name = "match_pref"> Match Pref Pressed </string>
     <string name = "settings"> Settings Pressed </string>
+    <string name = "hint1">Enter Your Address</string>
+    <string name = "hint2">Enter</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_search_button">SearchButton</string>
@@ -43,6 +45,33 @@
         <item>$3/hour</item>
         <item>$5/hour</item>
         <item>$7/hour</item>
+    </string-array>
+
+    <string-array name="list_of_cities">
+        <item>Chicago</item>
+        <item>Indianapolis</item>
+        <item>New York</item>
+        <item>Beijing</item>
+        <item>Austin</item>
+        <item>Terre Haute</item>
+        <item>Houston</item>
+        <item>Los Angles</item>
+        <item>Dallas</item>
+        <item>Denver</item>
+        <item>Baltimore</item>
+        <item>Las Vegas</item>
+        <item>Seattle</item>
+        <item>Columbus</item>
+        <item>Tucson</item>
+        <item>Kansas</item>
+        <item>Honolulu</item>
+        <item>Orlando</item>
+        <item>Lexington</item>
+        <item>St. Louis</item>
+        <item>Madison</item>
+        <item>Reno</item>
+        <item>Tampa</item>
+        <item>Garland</item>
     </string-array>
 
     <string-array name="Preferred">

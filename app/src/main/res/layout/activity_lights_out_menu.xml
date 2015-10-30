@@ -10,6 +10,27 @@
     android:background = "@color/background"
     >
 
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/address_enter"
+        android:hint="@string/hint1"
+        android:inputType="textPostalAddress"
+        android:layout_alignBottom="@+id/textView"
+        android:layout_centerHorizontal="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/address_enter2"
+        android:hint="@string/hint2"
+        android:inputType="number"
+        android:layout_below="@+id/address_enter"
+        android:layout_alignLeft="@+id/ListView"
+        android:layout_alignStart="@+id/ListView"
+        android:layout_toLeftOf="@+id/textView"
+        android:layout_toStartOf="@+id/textView" />
+
     //I parked here button
     <Button
         style="?android:attr/buttonStyleSmall"
@@ -87,14 +108,14 @@
         android:layout_centerHorizontal="true" />
 
     <!--<Button-->
-        <!--style="?android:attr/buttonStyleSmall"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="mDemoButton"-->
-        <!--android:id="@+id/mDemoButton"-->
-        <!--android:layout_alignTop="@+id/textView"-->
-        <!--android:layout_alignRight="@+id/Search"-->
-        <!--android:layout_alignEnd="@+id/Search" />-->
+    <!--style="?android:attr/buttonStyleSmall"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:text="mDemoButton"-->
+    <!--android:id="@+id/mDemoButton"-->
+    <!--android:layout_alignTop="@+id/textView"-->
+    <!--android:layout_alignRight="@+id/Search"-->
+    <!--android:layout_alignEnd="@+id/Search" />-->
 
     <TextView
         android:layout_width="wrap_content"
@@ -106,12 +127,21 @@
         android:layout_alignEnd="@+id/ListView"
         android:layout_marginTop="68dp" />
 
+    <AutoCompleteTextView
+        android:id="@+id/auto_complete_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="65dp"
+        android:ems="10"/>
+
     <!--<searchable xmlns:android="http://schemas.android.com/apk/res/android"-->
-        <!--android:label="Searchable"-->
-        <!--android:layout_width="250dp"-->
-        <!--android:layout_height="30dp"-->
-        <!--android:layout_marginTop = "100dp"-->
-        <!--android:layout_centerHorizontal="true">-->
+    <!--android:label="Searchable"-->
+    <!--android:layout_width="250dp"-->
+    <!--android:layout_height="30dp"-->
+    <!--android:layout_marginTop = "100dp"-->
+    <!--android:layout_centerHorizontal="true">-->
     <!--</searchable>-->
 
 </RelativeLayout>
