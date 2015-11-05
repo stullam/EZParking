@@ -1,6 +1,8 @@
 package com.example.stullam.lightsoutmenustull;
 
 import android.content.IntentSender;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -38,12 +40,15 @@ public class MapsActivity extends FragmentActivity
     public double currentLat = 0;
     public double currentLong = 0;
 
-
+    private EZParkingDBHelper dbHelper;// = EZParkingDBHelper.getInstance(this.getApplicationContext());
+    SQLiteDatabase db;// = dbHelper.getReadableDatabase();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        dbHelper = EZParkingDBHelper.getInstance(this.getApplicationContext());
+        db =  dbHelper.getReadableDatabase();
         setUpMapIfNeeded();
 
 //        ImportantSpotArray = (double[]) this.getIntent().getDoubleArrayExtra(ListView.KEY_CURRENTSPOT);
@@ -123,6 +128,26 @@ public class MapsActivity extends FragmentActivity
         //Log.d("LOM", "ImportantSpotArray[0] = " + ImportantSpotArray[0]);
         //Log.d("LOM", "ImportantSpotArray[1] = " + ImportantSpotArray[1]);
 
+        String[] projection = {EZParkingContract.EZParking.PARKING_COLUMN_LATITUDE_NAME, EZParkingContract.EZParking.PARKING_COLUMN_LONGITUDE_NAME};
+        Cursor c = db.query(EZParkingContract.EZParking.PARKING_TABLE_NAME,
+                            projection,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null);
+        if(c != null && c.getCount() > 0) {
+            c.moveToFirst();
+            while(!c.isLast()) {
+                int latitudeIndex = c.getColumnIndex(EZParkingContract.EZParking.PARKING_COLUMN_LATITUDE_NAME);
+                int longitudeIndex = c.getColumnIndex(EZParkingContract.EZParking.PARKING_COLUMN_LONGITUDE_NAME);
+                double latitude = c.getDouble(latitudeIndex);
+                double longitude = c.getDouble(longitudeIndex);
+                mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title("Parking spot"));
+                c.moveToNext();
+            }
+        }
+
         ImportantSpotArray = (double[]) this.getIntent().getDoubleArrayExtra(ListView.KEY_CURRENTSPOT);
         if(ImportantSpotArray != null) {
             targetLat = ImportantSpotArray[0];
@@ -142,15 +167,15 @@ public class MapsActivity extends FragmentActivity
 //        Log.d("LOM", "loc3 = " + locationData[3]);
 
 
-        if(ImportantSpotArray != null) {
-            mMap.addMarker(new MarkerOptions().position(new LatLng(targetLat, targetLong)).title("Target location"));
-            mMap.addMarker(new MarkerOptions().position(new LatLng(currentLat, currentLong)).title("You are here"));
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(targetLat, targetLong)));
-        }
-        if(locationData !=null) {
-            mMap.addMarker(new MarkerOptions().position(new LatLng(locationData[0], locationData[1])).title("Current Location"));
-            mMap.addMarker(new MarkerOptions().position(new LatLng(locationData[2], locationData[3])).title("Target location"));
-        }
+//        if(ImportantSpotArray != null) {
+//            mMap.addMarker(new MarkerOptions().position(new LatLng(targetLat, targetLong)).title("Target location"));
+//            mMap.addMarker(new MarkerOptions().position(new LatLng(currentLat, currentLong)).title("You are here"));
+//            mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(targetLat, targetLong)));
+//        }
+//        if(locationData !=null) {
+//            mMap.addMarker(new MarkerOptions().position(new LatLng(locationData[0], locationData[1])).title("Current Location"));
+//            mMap.addMarker(new MarkerOptions().position(new LatLng(locationData[2], locationData[3])).title("Target location"));
+//        }
         //mMap.addMarker(new MarkerOptions().position(new LatLng(currentLat, currentLong)).title("You are here"));
         //mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(targetLat, targetLong)));
 

@@ -2,10 +2,12 @@ package com.example.stullam.lightsoutmenustull;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -67,6 +69,9 @@ public class LightsOutMenu extends AppCompatActivity implements View.OnClickList
     public double currentSpotLat = 0;
     public double currentSpotLong = 0;
 
+    public EZParkingDBHelper dbHelper;
+    private SQLiteDatabase db;
+
     private AutoCompleteTextView autoCompleteTv;
 
     @Override
@@ -101,6 +106,8 @@ public class LightsOutMenu extends AppCompatActivity implements View.OnClickList
         autoCompleteTv = (AutoCompleteTextView)findViewById(R.id.auto_complete_tv);
         //autoCompleteTv.getText().toString();
         autoCompleteTv.setAdapter(adapter);
+        dbHelper = EZParkingDBHelper.getInstance(this.getApplicationContext());
+        db = dbHelper.getWritableDatabase();
     }
 
     @Override
@@ -218,6 +225,12 @@ public class LightsOutMenu extends AppCompatActivity implements View.OnClickList
                         LocationArray[1] = longitude;
                         LocationArray[2] = 20;
                         LocationArray[3] = 20;
+                        ContentValues values = new ContentValues();
+                        values.put(EZParkingContract.EZParking.PARKING_COLUMN_LATITUDE_NAME, latitude);
+                        values.put(EZParkingContract.EZParking.PARKING_COLUMN_LONGITUDE_NAME, longitude);
+                        db.insert(EZParkingContract.EZParking.PARKING_TABLE_NAME,
+                                  null,
+                                  values);
                         Log.d("LQM", "Latitude: " + Double.toString(latitude) + " Longitude: " + Double.toString(longitude));
                     } else {
                         Log.d("LQM", "No geo location found.");
