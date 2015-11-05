@@ -108,6 +108,8 @@ public class LightsOutMenu extends AppCompatActivity implements View.OnClickList
         autoCompleteTv.setAdapter(adapter);
         dbHelper = EZParkingDBHelper.getInstance(this.getApplicationContext());
         db = dbHelper.getWritableDatabase();
+//        db.execSQL(EZParkingContract.EZParking.SQL_CREATE_SETTINGS_TABLE);
+//        db.execSQL(EZParkingContract.EZParking.SQL_DELETE_SETTINGS_TABLE);
     }
 
     @Override
@@ -228,9 +230,10 @@ public class LightsOutMenu extends AppCompatActivity implements View.OnClickList
                         ContentValues values = new ContentValues();
                         values.put(EZParkingContract.EZParking.PARKING_COLUMN_LATITUDE_NAME, latitude);
                         values.put(EZParkingContract.EZParking.PARKING_COLUMN_LONGITUDE_NAME, longitude);
-                        db.insert(EZParkingContract.EZParking.PARKING_TABLE_NAME,
-                                  null,
-                                  values);
+                        db.insertWithOnConflict(EZParkingContract.EZParking.PARKING_TABLE_NAME,
+                                null,
+                                values,
+                                SQLiteDatabase.CONFLICT_REPLACE);
                         Log.d("LQM", "Latitude: " + Double.toString(latitude) + " Longitude: " + Double.toString(longitude));
                     } else {
                         Log.d("LQM", "No geo location found.");
