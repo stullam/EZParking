@@ -2,6 +2,7 @@ package com.example.stullam.lightsoutmenustull;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -43,31 +44,37 @@ public class LightsOutMenu extends AppCompatActivity implements View.OnClickList
     private Button mListViewButton;
     private Button mDemoButton;
 
-    private ParkingSpot Parking1 = new ParkingSpot("Parking1", 39.4698, -87.3898);
-    private ParkingSpot Parking2 = new ParkingSpot("Parking2", 39.4700, -87.3898);
-    private ParkingSpot Parking3 = new ParkingSpot("Parking3", 39.4702, -87.3898);
-    private ParkingSpot Parking4 = new ParkingSpot("Parking4", 39.4704, -87.3898);
-    private ParkingSpot Parking5 = new ParkingSpot("Parking5", 39.4706, -87.3898);
-    private ParkingSpot Parking6 = new ParkingSpot("Parking6", 39.4708, -87.3898);
-    private ParkingSpot Parking7 = new ParkingSpot("Parking7", 39.4710, -87.3898);
-    private ParkingSpot Parking8 = new ParkingSpot("Parking8", 39.4712, -87.3898);
-    private ParkingSpot Parking9 = new ParkingSpot("Parking9", 39.4714, -87.3898);
-    private ParkingSpot Parking10 = new ParkingSpot("Parking10", 39.4716, -87.3898);
+//    private ParkingSpot Parking1 = new ParkingSpot("Parking1", 39.4698, -87.3898);
+//    private ParkingSpot Parking2 = new ParkingSpot("Parking2", 39.4700, -87.3898);
+//    private ParkingSpot Parking3 = new ParkingSpot("Parking3", 39.4702, -87.3898);
+//    private ParkingSpot Parking4 = new ParkingSpot("Parking4", 39.4704, -87.3898);
+//    private ParkingSpot Parking5 = new ParkingSpot("Parking5", 39.4706, -87.3898);
+//    private ParkingSpot Parking6 = new ParkingSpot("Parking6", 39.4708, -87.3898);
+//    private ParkingSpot Parking7 = new ParkingSpot("Parking7", 39.4710, -87.3898);
+//    private ParkingSpot Parking8 = new ParkingSpot("Parking8", 39.4712, -87.3898);
+//    private ParkingSpot Parking9 = new ParkingSpot("Parking9", 39.4714, -87.3898);
+//    private ParkingSpot Parking10 = new ParkingSpot("Parking10", 39.4716, -87.3898);
 
     public ArrayList<ParkingSpot> parkSpots = new ArrayList<ParkingSpot>();
     public double[] ImportantSpotArray = new double[4];
     public double[] LocationArray = new double[4];
 
     static final String KEY_SEARCH_RADIUS = "KEY_SEARCH_RADIUS";
+    static final String KEY_MAX_PRICE = "KEY_MAX_PRICE";
     static final String KEY_TARGETSPOT = "KEY_TARGETSPOT";
     static final String KEY_LISTOFSPOTS = "KEY_LISTOFSPOTS";
     static final String KEY_LOCATIONARRAY = "KEY_LOCATIONARRAY";
+    static final String KEY_PREFERENCE = "KEY_PREFERENCE";
     private String mSearchRadius = "";
+    public String preferenceValue = "";
+    private String[] mSettings = new String[3];
     private static final int REQUEST_CODE_CHANGE_BUTTON = 1;
     private static final int REQUEST_CODE_TARGETSPOT = 1;
     private static final int REQUEST_CODE_LISTOFSPOTS = 1;
     public double currentSpotLat = 0;
     public double currentSpotLong = 0;
+
+    public String preference ="";
 
     public EZParkingDBHelper dbHelper;
     private SQLiteDatabase db;
@@ -108,23 +115,22 @@ public class LightsOutMenu extends AppCompatActivity implements View.OnClickList
         autoCompleteTv.setAdapter(adapter);
         dbHelper = EZParkingDBHelper.getInstance(this.getApplicationContext());
         db = dbHelper.getWritableDatabase();
-//        db.execSQL(EZParkingContract.EZParking.SQL_CREATE_SETTINGS_TABLE);
-//        db.execSQL(EZParkingContract.EZParking.SQL_DELETE_SETTINGS_TABLE);
+//        db.execSQL(EZParkingContract.EZParking.SQL_CREATE_PARKING_TABLE);
     }
 
     @Override
     public void onClick(View v) {
         //if(v.getId() == R.id.button)
-        parkSpots.add(Parking1);
-        parkSpots.add(Parking2);
-        parkSpots.add(Parking3);
-        parkSpots.add(Parking4);
-        parkSpots.add(Parking5);
-        parkSpots.add(Parking6);
-        parkSpots.add(Parking7);
-        parkSpots.add(Parking8);
-        parkSpots.add(Parking9);
-        parkSpots.add(Parking10);
+//        parkSpots.add(Parking1);
+//        parkSpots.add(Parking2);
+//        parkSpots.add(Parking3);
+//        parkSpots.add(Parking4);
+//        parkSpots.add(Parking5);
+//        parkSpots.add(Parking6);
+//        parkSpots.add(Parking7);
+//        parkSpots.add(Parking8);
+//        parkSpots.add(Parking9);
+//        parkSpots.add(Parking10);
 
         // This is where you enter the code to detemrine where the target spot is.
         // Store the 0 as the lattitude, and the 1 index as the longitude
@@ -189,6 +195,7 @@ public class LightsOutMenu extends AppCompatActivity implements View.OnClickList
             case R.id.MatchPreferences:
                 Log.d("LOM", "Search Button Clicked");
                 Intent matchIntent = new Intent(this, MatchPreferences.class);
+                matchIntent.putExtra(KEY_PREFERENCE, preferenceValue);
                 this.startActivity(matchIntent);
                 break;
             case R.id.IParked:
@@ -221,6 +228,7 @@ public class LightsOutMenu extends AppCompatActivity implements View.OnClickList
                     if (currentLocation != null) {
                         double latitude = currentLocation.getLatitude();
                         double longitude = currentLocation.getLongitude();
+                        double price = Math.random() * 10;
                         ImportantSpotArray[2] = latitude;
                         ImportantSpotArray[3] = longitude;
                         LocationArray[0] = latitude;
@@ -230,11 +238,13 @@ public class LightsOutMenu extends AppCompatActivity implements View.OnClickList
                         ContentValues values = new ContentValues();
                         values.put(EZParkingContract.EZParking.PARKING_COLUMN_LATITUDE_NAME, latitude);
                         values.put(EZParkingContract.EZParking.PARKING_COLUMN_LONGITUDE_NAME, longitude);
+                        values.put(EZParkingContract.EZParking.PARKING_COLUMN_PRICE_NAME, price);
                         db.insertWithOnConflict(EZParkingContract.EZParking.PARKING_TABLE_NAME,
                                 null,
                                 values,
                                 SQLiteDatabase.CONFLICT_REPLACE);
                         Log.d("LQM", "Latitude: " + Double.toString(latitude) + " Longitude: " + Double.toString(longitude));
+                        showAlert();
                     } else {
                         Log.d("LQM", "No geo location found.");
                     }
@@ -258,8 +268,29 @@ public class LightsOutMenu extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode==REQUEST_CODE_CHANGE_BUTTON && resultCode == Activity.RESULT_OK) {
+
             mSearchRadius = data.getStringExtra(KEY_SEARCH_RADIUS);
-            Log.d("LOM", "mNumButtons = " + mSearchRadius);
+            //preferenceValue  = data.getStringArrayExtra(KEY_PREFERENCE);
+            preferenceValue  = data.getStringExtra(KEY_PREFERENCE);
+            //preference = mSettings[2];
+            //System.out.println("mS 0 " + mSettings[0]);
+            //System.out.println("mS 1 " + mSettings[1]);
+            //System.out.println("mS 2 " + mSettings[2]);
+            System.out.println("preference " + preferenceValue);
+            //Log.d("LOM", "mNumButtons = " + mSearchRadius);
+
         }
     }
+
+    public void showAlert(){
+        AlertDialog.Builder myAlert = new AlertDialog.Builder(this);
+        myAlert.setMessage("Congratulation! You parked!").setPositiveButton("Great", new DialogInterface.OnClickListener(){
+            @Override
+            public void onClick(DialogInterface dialog, int which){
+                dialog.dismiss();
+            }
+        }).create();
+        myAlert.show();
+    }
+
 }

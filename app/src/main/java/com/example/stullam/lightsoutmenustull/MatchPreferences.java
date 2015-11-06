@@ -1,9 +1,17 @@
 package com.example.stullam.lightsoutmenustull;
 
+import android.Manifest;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.IntentSender;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
+import android.location.LocationManager;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -29,6 +37,7 @@ public class MatchPreferences extends FragmentActivity
     public static final String TAG = MapsActivity.class.getSimpleName();
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private LocationRequest mLocationRequest;
+
 
 //    private ParkingSpot Parking1 = new ParkingSpot("Parking1", 39.4698, -87.3898, 1);
 //    private ParkingSpot Parking2 = new ParkingSpot("Parking2", 39.4700, -87.3898, 2);
@@ -59,12 +68,20 @@ public class MatchPreferences extends FragmentActivity
     public double currentLat = 0;
     public double currentLong = 0;
 
+    private EZParkingDBHelper dbHelper;
+    private SQLiteDatabase readDB;
+
+//    int maxDistance = this.getIntent().getIntExtra(LightsOutMenu.KEY_SEARCH_RADIUS,0);
+//    int maxPrice = this.getIntent().getIntExtra(LightsOutMenu.KEY_MAX_PRICE,0);
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+//        System.out.println(maxDistance);
+//        System.out.println(maxPrice);
         setUpMapIfNeeded();
 
 //        parkSpots.add(Parking1);
@@ -79,24 +96,84 @@ public class MatchPreferences extends FragmentActivity
 //        parkSpots.add(Parking10);
 
 //        ImportantSpotInfo = (double[]) this.getIntent().getDoubleArrayExtra(LightsOutMenu.KEY_TARGETCURRENT);
-//        preference = (String) this.getIntent().getStringExtra(LightsOutMenu.KEY_PREFERENCE);
+
+        LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        int permission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+        if(permission == PackageManager.PERMISSION_GRANTED) {
+            manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, new android.location.LocationListener() {
+                @Override
+                public void onLocationChanged(Location location) {
+
+                }
+
+                @Override
+                public void onStatusChanged(String provider, int status, Bundle extras) {
+
+                }
+
+                @Override
+                public void onProviderEnabled(String provider) {
+
+                }
+
+                @Override
+                public void onProviderDisabled(String provider) {
+
+                }
+            });
+            Location currentLocation = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (currentLocation != null) {
+                double latitude = currentLocation.getLatitude();
+                double longitude = currentLocation.getLongitude();
+                CurrentSpot[0] = latitude;
+                CurrentSpot[1] = longitude;
+            }
+        }
+
+        dbHelper = EZParkingDBHelper.getInstance(this.getApplicationContext());
+        readDB = dbHelper.getReadableDatabase();
+        String[] projection = {EZParkingContract.EZParking.PARKING_COLUMN_LATITUDE_NAME, EZParkingContract.EZParking.PARKING_COLUMN_LONGITUDE_NAME,
+                EZParkingContract.EZParking.PARKING_COLUMN_PRICE_NAME};
+
+        Cursor c = readDB.query(EZParkingContract.EZParking.PARKING_TABLE_NAME, projection,null,null,null,null,null);
+        if(c != null && c.getCount() > 0) {
+            c.moveToFirst();
+            while(!c.isLast()) {
+                int latitudeIndex = c.getColumnIndex(EZParkingContract.EZParking.PARKING_COLUMN_LATITUDE_NAME);
+                int longitudeIndex = c.getColumnIndex(EZParkingContract.EZParking.PARKING_COLUMN_LONGITUDE_NAME);
+                int priceIndex = c.getColumnIndex(EZParkingContract.EZParking.PARKING_COLUMN_PRICE_NAME);
+
+                double latitude = c.getDouble(latitudeIndex);
+                double longitude = c.getDouble(longitudeIndex);
+                double price = c.getDouble(priceIndex);
+                ParkingSpot spot = new ParkingSpot("ParkingSpot",latitude,longitude,price);
+                parkSpots.add(spot);
+                c.moveToNext();
+            }
+        }
+        preference = (String) this.getIntent().getStringExtra(LightsOutMenu.KEY_PREFERENCE);
 
         System.out.println("preference in MatchPreferences Intent:" + preference);
         System.out.println("Comparator " + preference.compareTo("Distance"));
 
-        if(preference.equals("Distance") == true) {
+        if(preference.equals("Distance")) {
             System.out.println("I should really be doing stuff");
-            sortSpotByDistance(parkSpots, ImportantSpotInfo);
-            if (ImportantSpotInfo.length != 0) {
+            sortSpotByDistance(parkSpots, CurrentSpot);
+            if (CurrentSpot.length != 0) {
                 System.out.println("distance sorted: " + distanceSortedSpots.get(0).getLattitude());
                 mMap.addMarker(new MarkerOptions().position(new LatLng(distanceSortedSpots.get(0).getLattitude(), distanceSortedSpots.get(0).getLongitude())).title("The Nearest Spot Is Here"));
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(distanceSortedSpots.get(0).getLattitude(), distanceSortedSpots.get(0).getLongitude())));
             }
         }
-        if(preference.equals("Price/Distance")) {
+        if(preference.equals("Price*Distance")) {
             //Do stuff for the price/distance functionality
             System.out.println("I am accessing the Price/Distance thing");
-            sortByPriceOverDistance(parkSpots, ImportantSpotInfo);
+            sortByPriceOverDistance(parkSpots, CurrentSpot);
+            if(CurrentSpot.length != 0) {
+                System.out.println("Distance/Price sorted: " + PricePerDistanceSortedSpots.get(0).getLattitude());
+                mMap.addMarker(new MarkerOptions().position(new LatLng(PricePerDistanceSortedSpots.get(0).getLattitude(), PricePerDistanceSortedSpots.get(0).getLongitude())).title("The Nearest Spot Is Here"));
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(PricePerDistanceSortedSpots.get(0).getLattitude(), PricePerDistanceSortedSpots.get(0).getLongitude())));
+            }
         }
     }
 
@@ -170,14 +247,14 @@ public class MatchPreferences extends FragmentActivity
         for(int j = 0; j < possibleSpots.size();j++) {
             double price = possibleSpots.get(j).getPrice();
             double dist = possibleSpots.get(j).getDistance();
-            possibleSpots.get(j).setPricePerDistance(price/dist);
+            possibleSpots.get(j).setPriceDistance(price/dist);
             locPricePerDistanceHolder[j] = price/dist;
         }
 
         Arrays.sort(locPricePerDistanceHolder);
         for(int a = 0; a< possibleSpots.size(); a++) {
             for(int b = 0; b< possibleSpots.size(); b++) {
-                if(possibleSpots.get(b).getPricePerDistance() == locPricePerDistanceHolder[a]) {
+                if(possibleSpots.get(b).getPriceDistance() == locPricePerDistanceHolder[a]) {
                     PricePerDistanceSortedSpots.add(possibleSpots.get(b));
                 }
             }

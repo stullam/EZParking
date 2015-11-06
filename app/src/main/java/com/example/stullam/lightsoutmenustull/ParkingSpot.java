@@ -8,12 +8,15 @@ public class ParkingSpot {
     public double longitude;
     public String name;
     public double distance;
+    public double price;
+    public double pricedistance = 1;
 
-    public ParkingSpot(String Pname, double lat, double longit) {
+    public ParkingSpot(String Pname, double lat, double longit, double price) {
         this.lattitude = lat;
         this.longitude = longit;
         this.name = Pname;
         this.distance = 0;
+        this.price = price;
     }
 
     public double getLattitude() {
@@ -23,6 +26,8 @@ public class ParkingSpot {
     public double getLongitude() {
         return this.longitude;
     }
+
+    public double getPrice() { return this.price; }
 
     public String getName() {
         return this.name;
@@ -34,5 +39,8 @@ public class ParkingSpot {
     public double getDistance() {
         return this.distance;
     }
+
+    public void setPriceDistance(double distance) { pricedistance = distance * this.price;  }
+    public double getPriceDistance() { return this.pricedistance; }
 
 }

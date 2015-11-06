@@ -44,8 +44,9 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 savePreferences();
 
                 Intent returnIntent = new Intent();
-                //returnIntent.putExtra(LightsOutMenu.KEY_SEARCH_RADIUS, Integer.parseInt(spin.getSelectedItem().toString()));
-                returnIntent.putExtra(LightsOutMenu.KEY_SEARCH_RADIUS, spin.getSelectedItem().toString());
+//                returnIntent.putExtra(LightsOutMenu.KEY_SEARCH_RADIUS, Integer.parseInt(spin.getSelectedItem().toString().replaceAll("[\\D]", "")));
+//                returnIntent.putExtra(LightsOutMenu.KEY_MAX_PRICE, Integer.parseInt(spin1.getSelectedItem().toString().replaceAll("[\\D]", "")));
+                returnIntent.putExtra(LightsOutMenu.KEY_PREFERENCE, spin2.getSelectedItem().toString());
 
                 setResult(RESULT_OK, returnIntent);
                 finish();

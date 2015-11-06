@@ -1,11 +1,16 @@
 package com.example.stullam.lightsoutmenustull;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.IntentSender;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
+import android.location.LocationManager;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -82,7 +87,36 @@ public class FindNearest extends FragmentActivity
 //        parkSpots.add(Parking10);
 
         //ImportantSpotInfo = (double[]) this.getIntent().getDoubleArrayExtra(LightsOutMenu.KEY_TARGETCURRENT);
+        LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        int permission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+        if(permission == PackageManager.PERMISSION_GRANTED) {
+            manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, new android.location.LocationListener() {
+                @Override
+                public void onLocationChanged(Location location) {
 
+                }
+
+                @Override
+                public void onStatusChanged(String provider, int status, Bundle extras) {
+
+                }
+
+                @Override
+                public void onProviderEnabled(String provider) {
+
+                }
+
+                @Override
+                public void onProviderDisabled(String provider) {
+
+                }
+            });
+            Location currentLocation = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (currentLocation != null) {
+                CurrentSpot[0] = currentLocation.getLatitude();
+                CurrentSpot[1] = currentLocation.getLongitude();
+            }
+        }
         dbHelper = EZParkingDBHelper.getInstance(this.getApplicationContext());
         db = dbHelper.getReadableDatabase();
 //        double crowDist = Math.sqrt(((targetLat-tempLat) * (targetLat-tempLat)) + ((targetLong - tempLong) * (targetLong-tempLong)));
@@ -107,7 +141,7 @@ public class FindNearest extends FragmentActivity
                 c.moveToNext();
             }
         }
-        LatLng nearestSpot = sortSpotByDistance(positions, ImportantSpotInfo);
+        LatLng nearestSpot = sortSpotByDistance(positions, CurrentSpot);
         System.out.println(nearestSpot == null);
         System.out.println("Latitude: " + Double.toString(nearestSpot.latitude) + " Longitude: " + Double.toString(nearestSpot.longitude));
         mMap.addMarker(new MarkerOptions().position(nearestSpot).title("Nearest Spot"));

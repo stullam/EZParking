@@ -131,11 +131,12 @@ public class MapsActivity extends FragmentActivity
         String[] projection = {EZParkingContract.EZParking.PARKING_COLUMN_LATITUDE_NAME, EZParkingContract.EZParking.PARKING_COLUMN_LONGITUDE_NAME};
         Cursor c = db.query(EZParkingContract.EZParking.PARKING_TABLE_NAME,
                             projection,
-                            null,
-                            null,
-                            null,
-                            null,
-                            null);
+                            null, // WHERE clause
+                            null, // WHERE args
+                            null, // GROUP BY
+                            null, // HAVING
+                            null); // SORT BY
+        System.out.println(c.getCount());
         if(c != null && c.getCount() > 0) {
             c.moveToFirst();
             while(!c.isLast()) {
@@ -143,6 +144,7 @@ public class MapsActivity extends FragmentActivity
                 int longitudeIndex = c.getColumnIndex(EZParkingContract.EZParking.PARKING_COLUMN_LONGITUDE_NAME);
                 double latitude = c.getDouble(latitudeIndex);
                 double longitude = c.getDouble(longitudeIndex);
+//                System.out.println("Latitude: " + latitude + " Longitude: " + longitude);
                 mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title("Parking spot"));
                 c.moveToNext();
             }
