@@ -82,6 +82,16 @@ public class ListView extends AppCompatActivity implements View.OnClickListener 
         dbHelper = EZParkingDBHelper.getInstance(this.getApplicationContext());
         db = dbHelper.getReadableDatabase();
 
+        Button mapViewButton = (Button) findViewById(R.id.MapView2);
+        mapViewButton.setOnClickListener(new View.OnClickListener() {
+                 @Override
+        public void onClick(View v) {
+            startActivity(new Intent(ListView.this, MapsActivity.class));
+        }
+    }
+        );
+
+
         LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         int permission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
         if(permission == PackageManager.PERMISSION_GRANTED) {
