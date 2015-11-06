@@ -1,6 +1,8 @@
 package com.example.stullam.lightsoutmenustull;
 
 import android.content.IntentSender;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -29,6 +31,9 @@ public class FindNearest extends FragmentActivity
     public static final String TAG = MapsActivity.class.getSimpleName();
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private LocationRequest mLocationRequest;
+
+    private EZParkingDBHelper dbHelper;
+    private SQLiteDatabase db;
 
 //    private ParkingSpot Parking1 = new ParkingSpot("Parking1", 39.4698, -87.3898, 1);
 //    private ParkingSpot Parking2 = new ParkingSpot("Parking2", 39.4700, -87.3898, 2);
@@ -77,13 +82,42 @@ public class FindNearest extends FragmentActivity
 //        parkSpots.add(Parking10);
 
         //ImportantSpotInfo = (double[]) this.getIntent().getDoubleArrayExtra(LightsOutMenu.KEY_TARGETCURRENT);
-        System.out.println("distance sorted portion: ");
-        sortSpotByDistance(parkSpots, ImportantSpotInfo);
-        if(ImportantSpotInfo.length != 0) {
-            System.out.println("distance sorted: " + distanceSortedSpots.get(0).getLattitude());
-            mMap.addMarker(new MarkerOptions().position(new LatLng(distanceSortedSpots.get(0).getLattitude(), distanceSortedSpots.get(0).getLongitude())).title("The Nearest Spot Is Here"));
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(distanceSortedSpots.get(0).getLattitude(), distanceSortedSpots.get(0).getLongitude())));
+
+        dbHelper = EZParkingDBHelper.getInstance(this.getApplicationContext());
+        db = dbHelper.getReadableDatabase();
+//        double crowDist = Math.sqrt(((targetLat-tempLat) * (targetLat-tempLat)) + ((targetLong - tempLong) * (targetLong-tempLong)));
+        String[] projection = {EZParkingContract.EZParking.PARKING_COLUMN_LATITUDE_NAME, EZParkingContract.EZParking.PARKING_COLUMN_LONGITUDE_NAME};
+        Cursor c = db.query(EZParkingContract.EZParking.PARKING_TABLE_NAME,
+                            projection,
+                            null,
+                            null,
+                             null,
+                            null,
+                            null);
+        ArrayList<LatLng> positions = new ArrayList<LatLng>();
+
+        if(c != null && c.getCount() > 0) {
+            c.moveToFirst();
+            while(!c.isLast()) {
+                int latIndex = c.getColumnIndex(EZParkingContract.EZParking.PARKING_COLUMN_LATITUDE_NAME);
+                int longIndex = c.getColumnIndex(EZParkingContract.EZParking.PARKING_COLUMN_LONGITUDE_NAME);
+                double latitude = c.getDouble(latIndex);
+                double longitude = c.getDouble(longIndex);
+                positions.add(new LatLng(latitude, longitude));
+                c.moveToNext();
+            }
         }
+        LatLng nearestSpot = sortSpotByDistance(positions, ImportantSpotInfo);
+        System.out.println(nearestSpot == null);
+        System.out.println("Latitude: " + Double.toString(nearestSpot.latitude) + " Longitude: " + Double.toString(nearestSpot.longitude));
+        mMap.addMarker(new MarkerOptions().position(nearestSpot).title("Nearest Spot"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(nearestSpot));
+//        sortSpotByDistance(parkSpots, ImportantSpotInfo);
+//        if(ImportantSpotInfo.length != 0) {
+//            System.out.println("distance sorted: " + distanceSortedSpots.get(0).getLattitude());
+//            mMap.addMarker(new MarkerOptions().position(new LatLng(distanceSortedSpots.get(0).getLattitude(), distanceSortedSpots.get(0).getLongitude())).title("The Nearest Spot Is Here"));
+//            mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(distanceSortedSpots.get(0).getLattitude(), distanceSortedSpots.get(0).getLongitude())));
+//        }
 
 
 
@@ -169,28 +203,23 @@ public class FindNearest extends FragmentActivity
 
     }
 
-    private void sortSpotByDistance(ArrayList<ParkingSpot> possibleSpots, double[] targetSpot) {
+    private LatLng sortSpotByDistance(ArrayList<LatLng> possibleSpots, double[] targetSpot) {
         double targetLat = targetSpot[0];
         double targetLong = targetSpot[1];
+        LatLng currentMin = null;
+        double minDistance = 99999999;
         double[] locDistHolder = new double[possibleSpots.size()];
-
         for(int i = 0; i< possibleSpots.size(); i++) {
-            double tempLat = possibleSpots.get(i).getLattitude();
-            double tempLong = possibleSpots.get(i).getLongitude();
-
-            double crowDist = Math.sqrt(((targetLat-tempLat) * (targetLat-tempLat)) + ((targetLong - tempLong) * (targetLat-tempLat)));
-            possibleSpots.get(i).setDistance(crowDist);
-            locDistHolder[i] = crowDist;
-        }
-
-        Arrays.sort(locDistHolder);
-
-        for(int j = 0; j< possibleSpots.size(); j++) {
-            for(int k = 0; k< possibleSpots.size(); k++) {
-                if(possibleSpots.get(k).getDistance() == locDistHolder[j]) {
-                    distanceSortedSpots.add(possibleSpots.get(k));
-                }
+            double tempLat = possibleSpots.get(i).latitude;
+            double tempLong = possibleSpots.get(i).longitude;
+            System.out.println((targetLat - tempLat) * (targetLat - tempLat) + ((targetLong - tempLong) * (targetLong-tempLong)));
+            double crowDist = Math.sqrt(((targetLat-tempLat) * (targetLat-tempLat)) + ((targetLong - tempLong) * (targetLong-tempLong)));
+            System.out.println("crowDist = " + Double.toString(crowDist) + " minDistance = " + Double.toString(minDistance));
+            if(crowDist < minDistance) {
+                minDistance = crowDist;
+                currentMin = possibleSpots.get(i);
             }
         }
+        return currentMin;
     }
 }
