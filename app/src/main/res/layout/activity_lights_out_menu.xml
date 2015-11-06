@@ -38,6 +38,7 @@
         android:layout_height="60dp"
         android:text="I Parked Here"
         android:id="@+id/IParked"
+        android:textAllCaps="false"
         android:layout_above="@+id/FindNearest"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />

@@ -2,6 +2,7 @@ package com.example.stullam.lightsoutmenustull;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -109,7 +110,16 @@ public class LightsOutMenu extends AppCompatActivity implements View.OnClickList
         dbHelper = EZParkingDBHelper.getInstance(this.getApplicationContext());
         db = dbHelper.getWritableDatabase();
     }
-
+    public void showAlert(){
+        AlertDialog.Builder myAlert = new AlertDialog.Builder(this);
+        myAlert.setMessage("Congratulation! You parked!").setPositiveButton("Great", new DialogInterface.OnClickListener(){
+            @Override
+            public void onClick(DialogInterface dialog, int which){
+                dialog.dismiss();
+            }
+        }).create();
+        myAlert.show();
+    }
     @Override
     public void onClick(View v) {
         //if(v.getId() == R.id.button)
@@ -191,6 +201,7 @@ public class LightsOutMenu extends AppCompatActivity implements View.OnClickList
                 break;
             case R.id.IParked:
                 Log.d("LOM", "Park Button Clicked");
+                showAlert();
                 LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
                 int permission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
                 if(permission == PackageManager.PERMISSION_GRANTED) {
@@ -251,6 +262,7 @@ public class LightsOutMenu extends AppCompatActivity implements View.OnClickList
                 break;
         }
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/LightsOutMenuStull.iml" filepath="$PROJECT_DIR$/LightsOutMenuStull.iml" />
+      <module fileurl="file://$PROJECT_DIR$/EZParking.iml" filepath="$PROJECT_DIR$/EZParking.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

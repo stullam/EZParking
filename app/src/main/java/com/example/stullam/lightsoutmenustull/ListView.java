@@ -49,7 +49,7 @@ public class ListView extends AppCompatActivity implements View.OnClickListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_view);
-
+        toMapView();
         parkSpots.add(Parking1);
         parkSpots.add(Parking2);
         parkSpots.add(Parking3);
@@ -113,6 +113,17 @@ public class ListView extends AppCompatActivity implements View.OnClickListener 
         Park10 = (Button)findViewById(R.id.Park10);
         Park10.setText((String)distanceSortedSpots.get(9).getName());
         Park10.setOnClickListener(this);
+
+    }
+    private void toMapView(){
+        Button mapviewButton = (Button) findViewById(R.id.MapView2);
+        mapviewButton.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            startActivity(new Intent(ListView.this, MapsActivity.class));
+                                        }
+                                    }
+        );
     }
 
     private void sortSpotByDistance(ArrayList<ParkingSpot> possibleSpots, double[] targetSpot) {
