@@ -49,7 +49,7 @@ public class ListView extends AppCompatActivity implements View.OnClickListener 
 
     static final String KEY_CURRENTSPOT = "KEY_CURRENTSPOT";
 
-    private double distance = 100;
+    private double range = 5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +62,8 @@ public class ListView extends AppCompatActivity implements View.OnClickListener 
         Log.d("LOM", "list of spots 2 = " + ImportantSpotArray[2]);
         Log.d("LOM", "list of spots 3 = " + ImportantSpotArray[3]);
 
+
+        System.out.println(ImportantSpotArray[0] + ", " + ImportantSpotArray[1]);
         parkSpots.add(Parking1);
         parkSpots.add(Parking2);
         parkSpots.add(Parking3);
@@ -74,11 +76,11 @@ public class ListView extends AppCompatActivity implements View.OnClickListener 
         parkSpots.add(Parking10);
 
         for(int i=0;i<parkSpots.size();i++){
-            double dis = Math.sqrt((parkSpots.get(i).getLattitude()-ImportantSpotArray[0])*
-                                (parkSpots.get(i).getLattitude()-ImportantSpotArray[0])
-                               +(parkSpots.get(i).getLongitude()-ImportantSpotArray[1])*
-                                (parkSpots.get(i).getLongitude()-ImportantSpotArray[1]));
-            if(dis<distance) {
+            double dis = Math.sqrt((parkSpots.get(i).getLattitude()-ImportantSpotArray[2])*
+                                (parkSpots.get(i).getLattitude()-ImportantSpotArray[2])
+                               +(parkSpots.get(i).getLongitude()-ImportantSpotArray[3])*
+                                (parkSpots.get(i).getLongitude()-ImportantSpotArray[3]));
+            if(dis<range) {
                 avalibleSpots.add(parkSpots.get(i));
             }
         }

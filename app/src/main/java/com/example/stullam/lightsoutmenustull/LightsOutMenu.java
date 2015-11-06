@@ -174,6 +174,9 @@ public class LightsOutMenu extends AppCompatActivity implements View.OnClickList
                 Log.d("LOM", "Search Button Clicked");
                 Intent mapIntent = new Intent(this, MapsActivity.class);
                 //Intent mapIntent = new Intent(this, MapView.class);
+                boolean mutiOrsingle = true;
+                mapIntent.putExtra("mutiOrsingle",mutiOrsingle);
+                mapIntent.putExtra("Yourlocation", ImportantSpotArray);
                 mapIntent.putExtra(KEY_LOCATIONARRAY, LocationArray);
                 this.startActivity(mapIntent);
                 break;

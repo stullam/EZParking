@@ -15,8 +15,11 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.ArrayList;
 
 public class MapsActivity extends FragmentActivity
         //implements
@@ -38,12 +41,34 @@ public class MapsActivity extends FragmentActivity
     public double currentLat = 0;
     public double currentLong = 0;
 
+    private ParkingSpot Parking1 = new ParkingSpot("Parking1", 39.4698, -87.3898);
+    private ParkingSpot Parking2 = new ParkingSpot("Parking2", 42.4700, -87.3898);
+    private ParkingSpot Parking3 = new ParkingSpot("Parking3", 45.4702, -87.3898);
+    private ParkingSpot Parking4 = new ParkingSpot("Parking4", 38.4704, -87.3898);
+    private ParkingSpot Parking5 = new ParkingSpot("Parking5", 39.5706, -87.3898);
+    private ParkingSpot Parking6 = new ParkingSpot("Parking6", 43.4708, -87.3898);
+    private ParkingSpot Parking7 = new ParkingSpot("Parking7", 51.4710, -87.3898);
+    private ParkingSpot Parking8 = new ParkingSpot("Parking8", 30.4712, -87.3898);
+    private ParkingSpot Parking9 = new ParkingSpot("Parking9", 32.4714, -87.3898);
+    private ParkingSpot Parking10 = new ParkingSpot("Parking10", 35.4716, -87.3898);
 
+    private ArrayList<ParkingSpot> parkSpots = new ArrayList<ParkingSpot>();
+    private int range = 5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        parkSpots.add(Parking1);
+        parkSpots.add(Parking2);
+        parkSpots.add(Parking3);
+        parkSpots.add(Parking4);
+        parkSpots.add(Parking5);
+        parkSpots.add(Parking6);
+        parkSpots.add(Parking7);
+        parkSpots.add(Parking8);
+        parkSpots.add(Parking9);
+        parkSpots.add(Parking10);
         setUpMapIfNeeded();
 
 //        ImportantSpotArray = (double[]) this.getIntent().getDoubleArrayExtra(ListView.KEY_CURRENTSPOT);
@@ -135,21 +160,40 @@ public class MapsActivity extends FragmentActivity
 
         double[] locationData = this.getIntent().getDoubleArrayExtra(LightsOutMenu.KEY_LOCATIONARRAY);
         //ImportantSpotArray = this.getIntent().getDoubleArrayExtra(LightsOutMenu.KEY_LISTOFSPOTS);
-
 //        Log.d("LOM", "loc0 = " + locationData[0]);
 //        Log.d("LOM", "loc1 = " + locationData[1]);
 //        Log.d("LOM", "loc2 = " + locationData[2]);
 //        Log.d("LOM", "loc3 = " + locationData[3]);
 
-
-        if(ImportantSpotArray != null) {
-            mMap.addMarker(new MarkerOptions().position(new LatLng(targetLat, targetLong)).title("Target location"));
-            mMap.addMarker(new MarkerOptions().position(new LatLng(currentLat, currentLong)).title("You are here"));
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(targetLat, targetLong)));
-        }
-        if(locationData !=null) {
-            mMap.addMarker(new MarkerOptions().position(new LatLng(locationData[0], locationData[1])).title("Current Location"));
-            mMap.addMarker(new MarkerOptions().position(new LatLng(locationData[2], locationData[3])).title("Target location"));
+        boolean mutiOrsingle = this.getIntent().getBooleanExtra("mutiOrsingle",false);
+        double[] ImportantSpotArray2 = (double[]) this.getIntent().getDoubleArrayExtra("Yourlocation");
+        if(mutiOrsingle) {
+            for(int i=0;i<parkSpots.size();i++) {
+                double dis = Math.sqrt((parkSpots.get(i).getLattitude() - ImportantSpotArray2[0]) *
+                        (parkSpots.get(i).getLattitude() - ImportantSpotArray2[0])
+                        + (parkSpots.get(i).getLongitude() - ImportantSpotArray2[1]) *
+                        (parkSpots.get(i).getLongitude() - ImportantSpotArray2[1]));
+                if (dis < range) {
+                    System.out.println(dis);
+                    mMap.addMarker(new MarkerOptions().
+                            position(new LatLng(parkSpots.get(i).getLattitude(), parkSpots.get(i).getLongitude())).
+                            title(parkSpots.get(i).getName()));
+                }
+            }
+            mMap.addMarker(new MarkerOptions().
+                    position(new LatLng(ImportantSpotArray2[0], ImportantSpotArray2[1])).title("You are here")
+                    .icon(BitmapDescriptorFactory
+                    .defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+        }else {
+            if (ImportantSpotArray != null) {
+                mMap.addMarker(new MarkerOptions().position(new LatLng(targetLat, targetLong)).title("Target location"));
+                mMap.addMarker(new MarkerOptions().position(new LatLng(currentLat, currentLong)).title("You are here"));
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(targetLat, targetLong)));
+            }
+            if (locationData != null) {
+                mMap.addMarker(new MarkerOptions().position(new LatLng(locationData[0], locationData[1])).title("Current Location"));
+                mMap.addMarker(new MarkerOptions().position(new LatLng(locationData[2], locationData[3])).title("Target location"));
+            }
         }
         //mMap.addMarker(new MarkerOptions().position(new LatLng(currentLat, currentLong)).title("You are here"));
         //mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(targetLat, targetLong)));
